@@ -1,0 +1,76 @@
+name: Extract Rumion zip
+
+# Upload rumion-novel-hub.zip to the repo root, and this workflow unpacks it so
+# backend/ and frontend/ appear at the top level of the repo, then removes the zip.
+# You can also run it by hand: Actions tab -> "Extract Rumion zip" -> Run workflow.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "rumion-novel-hub.zip"
+  workflow_dispatch:
+    inputs:
+      zip_path:
+        description: "Path of the zip inside the repo"
+        default: "rumion-novel-hub.zip"
+        required: true
+
+permissions:
+  contents: write   # needed to commit the extracted files back
+
+env:
+  ZIP_PATH: ${{ github.event.inputs.zip_path || 'rumion-novel-hub.zip' }}
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Stop if the zip is not there (e.g. after it was removed)
+        id: check
+        run: |
+          if [ -f "$ZIP_PATH" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No $ZIP_PATH in the repo - nothing to extract."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Extract the zip
+        if: steps.check.outputs.found == 'true'
+        run: |
+          set -euo pipefail
+          rm -rf "$RUNNER_TEMP/unzipped"
+          mkdir -p "$RUNNER_TEMP/unzipped"
+          unzip -q "$ZIP_PATH" -d "$RUNNER_TEMP/unzipped"
+
+          # The zip wraps everything in one top-level folder (rumion/).
+          # If so, use its contents so backend/ and frontend/ land at the repo root.
+          SRC="$RUNNER_TEMP/unzipped"
+          if [ "$(ls -A "$SRC" | wc -l)" -eq 1 ] && [ -d "$SRC/$(ls -A "$SRC")" ]; then
+            SRC="$SRC/$(ls -A "$SRC")"
+          fi
+
+          # Copy in everything except the workflows folder, so this workflow
+          # (and any others you have) are never overwritten.
+          rsync -a --exclude '.github/workflows/' --exclude '.git/' "$SRC"/ ./
+          git rm -q --cached "$ZIP_PATH" || true
+          rm -f "$ZIP_PATH"
+
+          echo "Extracted. Top level now:"
+          ls -1
+
+      - name: Commit and push the extracted files
+        if: steps.check.outputs.found == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "Extract Rumion Novel Hub zip"
+            git push
+          fi
