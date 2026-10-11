@@ -1,0 +1,7 @@
+.auth { padding-top: 30px; }
+.auth h2 { margin-bottom: 6px; }
+.auth__form { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+.auth__checkbox { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+.auth__error { color: var(--burgundy); font-size: 13px; margin: 0; }
+.auth__switch { margin-top: 18px; text-align: center; }
+.auth__switch a { color: var(--accent); font-weight: 600; }

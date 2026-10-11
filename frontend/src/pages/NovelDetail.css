@@ -1,0 +1,31 @@
+.novel-detail__hero {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface-2);
+  position: relative;
+}
+.novel-detail__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(23,19,32,0.15), var(--bg) 95%);
+}
+.novel-detail__body { margin-top: -70px; position: relative; }
+.novel-detail__top { display: flex; gap: 14px; align-items: flex-end; }
+.novel-detail__cover {
+  width: 108px; height: 154px; object-fit: cover; border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card); border: 3px solid var(--surface);
+}
+.novel-detail__title { font-size: 22px; line-height: 1.2; }
+.novel-detail__genres { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.novel-detail__stats {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 18px; padding: 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.novel-detail__fav.is-active { color: var(--burgundy); border-color: var(--burgundy); }
+.novel-detail__synopsis { margin-top: 16px; line-height: 1.6; font-size: 15px; }
+.novel-detail__chapters { margin-top: 22px; }
+.novel-detail__chapters ul { list-style: none; padding: 0; margin: 10px 0 0; }
+.novel-detail__chapters li + li { border-top: 1px solid var(--border); }
+.novel-detail__chapters a {
+  display: flex; justify-content: space-between; padding: 12px 4px; font-size: 14px;
+}

@@ -1,0 +1,90 @@
+.entry {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, #2f2745 0%, #211c2e 55%, #171320 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  overflow: hidden;
+  transition: opacity 0.6s ease;
+}
+
+.entry--leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.entry__glow {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 162, 75, 0.55) 0%, rgba(201, 162, 75, 0) 70%);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+.entry__book {
+  filter: drop-shadow(0 0 18px rgba(201, 162, 75, 0.65));
+  animation: bookIn 1s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+  z-index: 1;
+}
+
+@keyframes bookIn {
+  from { transform: scale(0.6) rotate(-6deg); opacity: 0; }
+  to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.entry__title {
+  color: #f6efe2;
+  font-size: 26px;
+  margin-top: 22px;
+  z-index: 1;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.6s forwards;
+}
+
+.entry__tagline {
+  color: #c9a24b;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  margin-top: 6px;
+  z-index: 1;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.8s forwards;
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.entry__petal {
+  position: absolute;
+  top: 46%;
+  width: 9px;
+  height: 12px;
+  background: linear-gradient(160deg, #e0a4a4, #c9a24b);
+  border-radius: 60% 10% 60% 10%;
+  opacity: 0;
+  animation: petalDrift 2.1s ease-out forwards;
+}
+
+@keyframes petalDrift {
+  0% { transform: translate(0, 0) rotate(0deg) scale(0.4); opacity: 0; }
+  15% { opacity: 0.95; }
+  100% { transform: translate(var(--drift), -120px) rotate(220deg) scale(1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry__book, .entry__glow, .entry__petal, .entry__title, .entry__tagline {
+    animation: none !important;
+    opacity: 1;
+  }
+}

@@ -1,0 +1,21 @@
+.star-rating {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.star {
+  background: none;
+  border: none;
+  color: var(--border);
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px;
+}
+
+.star.is-filled {
+  color: var(--gilt);
+}
+
+.star:disabled {
+  cursor: default;
+}

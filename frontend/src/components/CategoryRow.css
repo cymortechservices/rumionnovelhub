@@ -1,0 +1,33 @@
+.category-row {
+  margin-top: 22px;
+}
+
+.category-row__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 18px;
+  margin-bottom: 10px;
+}
+
+.category-row__head h3 {
+  font-size: 19px;
+}
+
+.category-row__more {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.category-row__scroller {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 0 18px 4px;
+  scroll-snap-type: x proximity;
+}
+
+.category-row__scroller::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,17 @@
+.comments { padding: 18px; }
+.comments__title { font-size: 19px; margin-bottom: 12px; }
+.comments__form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.comments__form .btn { align-self: flex-end; }
+.comments__login-hint { margin-bottom: 18px; }
+.comments__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.comments__item { display: flex; gap: 10px; }
+.comments__avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center; font-weight: 700;
+  color: var(--accent); flex-shrink: 0; overflow: hidden; font-size: 14px;
+}
+.comments__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.comments__name { margin: 0; font-size: 13px; font-weight: 700; }
+.comments__time { font-weight: 400; margin-left: 4px; }
+.comments__text { margin: 3px 0 0; font-size: 14px; line-height: 1.5; }
+.comments__delete { background: none; border: none; color: var(--text-muted); font-size: 12px; padding: 4px 0; cursor: pointer; }

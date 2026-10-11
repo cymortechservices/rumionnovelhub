@@ -1,0 +1,16 @@
+.browse__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px;
+}
+.browse__sort {
+  width: auto;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+.browse__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 16px 10px;
+}
