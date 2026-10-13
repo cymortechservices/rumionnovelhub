@@ -41,7 +41,9 @@ the first time a logged-in reader opens the novel; the story text is always read
 
 - `src/components/EntryAnimation.*` — the glowing-book-and-petals splash,
   shown once per browser session (`sessionStorage`), then fades into Home.
-- `src/pages/Reader.jsx` + `src/utils/paginate.js` — the reading screen.
+- `src/components/BookReader.jsx` + `src/utils/pagination.js` — the shared reading surface (measured pagination, drag-to-peel page turns, scroll mode). `Reader.jsx` / `ExternalReader.jsx` are thin wrappers.
+- `src/utils/progress.js` — per-device reading progress behind Continue reading.
+- (older description of the reading screen follows)
   Chapter text is paginated to roughly one screen per "page" at the current
   font settings, then pages animate between each other in one of three
   styles (`curl`, `slide`, `fade`) set from the in-reader **Aa** button.
@@ -67,5 +69,3 @@ things worth doing before a real launch:
 - Add an age gate / confirmation before showing "18+" genre content.
 - Swap the plain-textarea chapter editor for a rich-text editor if authors
   want inline formatting (bold/italic/scene breaks).
-- Add reading-progress tracking (last page read per chapter) if you want a
-  "Continue reading" row on Home.

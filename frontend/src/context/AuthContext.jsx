@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { fetchMe, loginUser, registerUser } from "../services/api";
+import { local } from "../utils/store";
 
 const AuthContext = createContext(null);
 
@@ -8,33 +9,33 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("rumion_token");
+    const token = local.get("rumion_token");
     if (!token) {
       setLoading(false);
       return;
     }
     fetchMe()
       .then(({ user }) => setUser(user))
-      .catch(() => localStorage.removeItem("rumion_token"))
+      .catch(() => local.remove("rumion_token"))
       .finally(() => setLoading(false));
   }, []);
 
   const login = useCallback(async (email, password) => {
     const { token, user } = await loginUser({ email, password });
-    localStorage.setItem("rumion_token", token);
+    local.set("rumion_token", token);
     setUser(user);
     return user;
   }, []);
 
   const register = useCallback(async (payload) => {
     const { token, user } = await registerUser(payload);
-    localStorage.setItem("rumion_token", token);
+    local.set("rumion_token", token);
     setUser(user);
     return user;
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("rumion_token");
+    local.remove("rumion_token");
     setUser(null);
   }, []);
 

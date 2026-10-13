@@ -7,6 +7,7 @@ import {
 import {
   unwrap, unwrapList, normalizeNovel, normalizeChapterListItem, toRumionGenres,
 } from "../utils/externalAdapter";
+import { chapterLabel, getProgress, progressKey, resumeLink, resumeTarget } from "../utils/progress";
 import { isAgeConfirmed } from "../utils/ageGate";
 import { useAuth } from "../context/AuthContext";
 import AgeGate from "../components/AgeGate";
@@ -21,6 +22,7 @@ export default function ExternalNovelDetail() {
   const { detailPath } = useParams();
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
+  const saved = getProgress(progressKey("external", detailPath));
   const [novel, setNovel] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [mirror, setMirror] = useState(null);
@@ -131,9 +133,14 @@ export default function ExternalNovelDetail() {
           </button>
         </div>
 
+        {saved && (!saved.finished || saved.next) ? (
+          <Link to={resumeLink(saved)} className="btn btn-primary btn-block" style={{ marginTop: 16 }}>
+            Continue reading · {chapterLabel(resumeTarget(saved).order, "")}
+          </Link>
+        ) : null}
         {first && (
-          <Link to={readTo(first)} className="btn btn-primary btn-block" style={{ marginTop: 16 }}>
-            Start reading
+          <Link to={readTo(first)} className={`btn ${saved ? "btn-ghost" : "btn-primary"} btn-block`} style={{ marginTop: 12 }}>
+            {saved ? "Start from chapter 1" : "Start reading"}
           </Link>
         )}
 

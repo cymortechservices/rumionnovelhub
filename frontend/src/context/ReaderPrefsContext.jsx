@@ -1,12 +1,16 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { local } from "../utils/store";
 
 const DEFAULTS = {
-  fontFamily: "Literata", // Literata | Inter | Atkinson Hyperlegible
+  fontFamily: "Literata",
   fontSize: 19, // px
   lineHeight: 1.7,
-  theme: "parchment", // parchment | dark | sepia | midnight
+  theme: "parchment", // see constants/readerThemes.js, or "custom"
   pageTurn: "curl", // curl | slide | fade
-  accent: "burgundy", // burgundy | gilt | sage
+  readMode: "pages", // pages | scroll
+  accent: "burgundy",
+  customBg: "#fff8e7",
+  customText: "#2b2118",
 };
 
 const ReaderPrefsContext = createContext(null);
@@ -14,7 +18,7 @@ const ReaderPrefsContext = createContext(null);
 export function ReaderPrefsProvider({ children }) {
   const [prefs, setPrefs] = useState(() => {
     try {
-      const saved = localStorage.getItem("rumion_reader_prefs");
+      const saved = local.get("rumion_reader_prefs");
       return saved ? { ...DEFAULTS, ...JSON.parse(saved) } : DEFAULTS;
     } catch {
       return DEFAULTS;
@@ -22,13 +26,14 @@ export function ReaderPrefsProvider({ children }) {
   });
 
   useEffect(() => {
-    localStorage.setItem("rumion_reader_prefs", JSON.stringify(prefs));
+    local.set("rumion_reader_prefs", JSON.stringify(prefs));
   }, [prefs]);
 
   const updatePrefs = (patch) => setPrefs((p) => ({ ...p, ...patch }));
+  const resetPrefs = () => setPrefs(DEFAULTS);
 
   return (
-    <ReaderPrefsContext.Provider value={{ prefs, updatePrefs }}>
+    <ReaderPrefsContext.Provider value={{ prefs, updatePrefs, resetPrefs }}>
       {children}
     </ReaderPrefsContext.Provider>
   );

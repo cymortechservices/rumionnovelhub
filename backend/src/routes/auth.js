@@ -8,7 +8,15 @@ const { uploadAvatar } = require("../config/cloudinary");
 
 const router = express.Router();
 
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
+// Only failed attempts count towards the limit, so normal sign-ups are never blocked.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 40,
+  skipSuccessfulRequests: true,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many attempts. Please wait a few minutes and try again." },
+});
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "30d" });
@@ -21,6 +29,7 @@ const publicUser = (u) => ({
   avatarUrl: u.avatarUrl,
   role: u.role,
   isAuthor: u.isAuthor,
+  favorites: (u.favorites || []).map((f) => f.toString()),
 });
 
 // POST /api/auth/register
@@ -28,21 +37,33 @@ router.post(
   "/register",
   authLimiter,
   asyncHandler(async (req, res) => {
-    const { penName, email, password, becomeAuthor } = req.body;
-    if (!penName || !email || !password) {
+    const penName = String(req.body.penName || "").trim();
+    const email = String(req.body.email || "").trim().toLowerCase();
+    const password = String(req.body.password || "");
+    const becomeAuthor = req.body.becomeAuthor === true || req.body.becomeAuthor === "true";
+
+    if (penName.length < 2) {
       res.status(400);
-      throw new Error("Pen name, email and password are required.");
+      throw new Error("Choose a pen name with at least 2 characters.");
     }
-    const exists = await User.findOne({ email: email.toLowerCase() });
-    if (exists) {
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      res.status(400);
+      throw new Error("Enter a valid email address.");
+    }
+    if (password.length < 6) {
+      res.status(400);
+      throw new Error("Your password needs at least 6 characters.");
+    }
+    if (await User.exists({ email })) {
       res.status(409);
-      throw new Error("An account with that email already exists.");
+      throw new Error("An account with that email already exists. Try logging in instead.");
     }
+
     const user = await User.create({
       penName,
       email,
       password,
-      isAuthor: !!becomeAuthor,
+      isAuthor: becomeAuthor,
       role: becomeAuthor ? "author" : "reader",
     });
     res.status(201).json({ token: signToken(user._id), user: publicUser(user) });
@@ -55,7 +76,7 @@ router.post(
   authLimiter,
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.findOne({ email: (email || "").toLowerCase() }).select("+password");
+    const user = await User.findOne({ email: String(email || "").trim().toLowerCase() }).select("+password");
     if (!user || !(await user.comparePassword(password || ""))) {
       res.status(401);
       throw new Error("Incorrect email or password.");
@@ -80,7 +101,7 @@ router.patch(
   uploadAvatar.single("avatar"),
   asyncHandler(async (req, res) => {
     const { penName, bio, becomeAuthor } = req.body;
-    if (penName) req.user.penName = penName;
+    if (penName && penName.trim().length >= 2) req.user.penName = penName.trim();
     if (bio !== undefined) req.user.bio = bio;
     if (becomeAuthor === "true") {
       req.user.isAuthor = true;

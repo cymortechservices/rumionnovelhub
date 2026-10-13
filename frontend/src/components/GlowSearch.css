@@ -1,0 +1,118 @@
+@property --glow-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.glow-search {
+  position: relative;
+  isolation: isolate;
+  margin: 14px 18px 8px;
+  border-radius: 999px;
+}
+
+/* the travelling light */
+.glow-search__ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  z-index: -1;
+  background: conic-gradient(
+    from var(--glow-angle),
+    rgba(201, 162, 75, 0) 0deg,
+    #c9a24b 60deg,
+    #f4c7c7 130deg,
+    #b8475a 200deg,
+    rgba(201, 162, 75, 0) 290deg,
+    rgba(201, 162, 75, 0) 360deg
+  );
+  animation: glow-spin 3.6s linear infinite;
+  box-shadow: 0 0 18px rgba(201, 162, 75, 0.45);
+}
+
+/* soft halo that breathes, also the fallback where @property is unsupported */
+.glow-search__ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  filter: blur(14px);
+  opacity: 0.75;
+  animation: glow-breathe 2.8s ease-in-out infinite;
+}
+
+.glow-search:focus-within .glow-search__ring {
+  animation-duration: 1.6s;
+}
+.glow-search:focus-within .glow-search__ring::after {
+  opacity: 1;
+  filter: blur(18px);
+}
+
+.glow-search__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 6px 0 16px;
+  border-radius: inherit;
+  background: var(--surface);
+}
+
+.glow-search__icon {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.glow-search__input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 16px; /* 16px stops iOS zooming the page on focus */
+  -webkit-appearance: none;
+  appearance: none;
+}
+.glow-search__input:focus {
+  outline: none;
+}
+.glow-search__input::placeholder {
+  color: var(--text-muted);
+}
+.glow-search__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.glow-search__go {
+  height: 40px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--parchment);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+[data-theme="dark"] .glow-search__go {
+  color: var(--twilight-2);
+}
+
+@keyframes glow-spin {
+  to {
+    --glow-angle: 360deg;
+  }
+}
+@keyframes glow-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}

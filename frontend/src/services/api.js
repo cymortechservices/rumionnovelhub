@@ -1,11 +1,20 @@
 import axios from "axios";
+import { local } from "../utils/store";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-export const api = axios.create({ baseURL: API_URL });
+export const api = axios.create({ baseURL: API_URL, timeout: 30000 });
+
+// A message a person can act on, whatever went wrong (server message, cold start, offline).
+export function apiError(err, fallback = "Something went wrong. Please try again.") {
+  const msg = err?.response?.data?.message;
+  if (msg) return msg;
+  if (!err?.response) return "Can't reach the server. It may be waking up, so try again in a few seconds.";
+  return fallback;
+}
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("rumion_token");
+  const token = local.get("rumion_token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });

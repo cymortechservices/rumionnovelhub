@@ -8,6 +8,7 @@ import {
   fetchMyRating,
 } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { chapterLabel, getProgress, progressKey, resumeLink, resumeTarget } from "../utils/progress";
 import StarRating from "../components/StarRating";
 import CommentSection from "../components/CommentSection";
 import "./NovelDetail.css";
@@ -16,6 +17,7 @@ export default function NovelDetail() {
   const { id } = useParams();
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
+  const saved = getProgress(progressKey("original", id));
   const [novel, setNovel] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [myRating, setMyRating] = useState(0);
@@ -79,6 +81,16 @@ export default function NovelDetail() {
             {isFav ? "♥ Favorited" : "♡ Favorite"}
           </button>
         </div>
+
+        {saved && (!saved.finished || saved.next) ? (
+          <Link to={resumeLink(saved)} className="btn btn-primary btn-block" style={{ marginTop: 16 }}>
+            Continue reading · {chapterLabel(resumeTarget(saved).order, "")}
+          </Link>
+        ) : chapters[0] ? (
+          <Link to={`/read/${chapters[0]._id}`} className="btn btn-primary btn-block" style={{ marginTop: 16 }}>
+            Start reading
+          </Link>
+        ) : null}
 
         <p className="novel-detail__synopsis">{novel.synopsis}</p>
 

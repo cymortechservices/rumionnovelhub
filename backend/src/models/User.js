@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const coll = require("../config/collections");
 const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
@@ -29,4 +30,4 @@ userSchema.methods.comparePassword = function (candidate) {
   return bcrypt.compare(candidate, this.password);
 };
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema, coll("users"));

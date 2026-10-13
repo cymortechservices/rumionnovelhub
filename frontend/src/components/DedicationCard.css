@@ -1,0 +1,187 @@
+.dedication {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  margin: 0 18px 22px;
+  padding: 34px 26px 28px;
+  border-radius: 24px;
+  text-align: center;
+  color: #f8e9de;
+  background:
+    radial-gradient(120% 70% at 50% -10%, rgba(201, 162, 75, 0.3), transparent 62%),
+    radial-gradient(90% 60% at 100% 100%, rgba(184, 71, 90, 0.35), transparent 60%),
+    linear-gradient(160deg, #6e1e2f 0%, #4a1424 52%, #2b1030 100%);
+  box-shadow: 0 20px 44px rgba(91, 26, 36, 0.38), inset 0 0 0 1px rgba(201, 162, 75, 0.4);
+}
+
+/* gilt keyline, like the border of a book plate */
+.dedication::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 16px;
+  border: 1px solid rgba(201, 162, 75, 0.55);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dedication > *:not(.dedication__petals) {
+  position: relative;
+  z-index: 2;
+}
+
+.dedication__petals {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.dedication__petals span {
+  position: absolute;
+  top: -20px;
+  border-radius: 60% 10% 60% 10%;
+  background: linear-gradient(160deg, #f0b6bb, #c9a24b);
+  opacity: 0;
+  animation: petal-fall linear infinite;
+}
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate3d(22px, 170px, 0) rotate(160deg);
+  }
+  100% {
+    transform: translate3d(-12px, 380px, 0) rotate(340deg);
+    opacity: 0;
+  }
+}
+
+.dedication__seal {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 66px;
+  height: 66px;
+  border: none;
+  border-radius: 50%;
+  color: #fbe3dc;
+  cursor: pointer;
+  background: radial-gradient(circle at 35% 30%, #d9476a, #8d1b3a 60%, #5e1127);
+  box-shadow: 0 0 0 3px rgba(201, 162, 75, 0.75), 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 28px rgba(217, 71, 106, 0.45);
+  animation: heartbeat 2.2s ease-in-out infinite;
+}
+.dedication__seal:active {
+  transform: scale(0.94);
+}
+@keyframes heartbeat {
+  0%,
+  45%,
+  100% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(1.09);
+  }
+  30% {
+    transform: scale(1.02);
+  }
+}
+
+.dedication__float {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-style: normal;
+  font-size: 16px;
+  color: #ff8fa8;
+  opacity: 0;
+  pointer-events: none;
+  animation: float-up 1.6s ease-out forwards;
+}
+@keyframes float-up {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(var(--r)) scale(var(--s));
+    opacity: 0;
+  }
+}
+
+.dedication__script {
+  margin: 14px 0 0;
+  font-family: "Great Vibes", "Snell Roundhand", "Brush Script MT", cursive;
+  font-size: 44px;
+  line-height: 1.1;
+  color: #f1d58a;
+  text-shadow: 0 2px 16px rgba(201, 162, 75, 0.35);
+}
+
+.dedication__rule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px auto 14px;
+  max-width: 220px;
+  color: #e7a3b1;
+  font-size: 12px;
+}
+.dedication__rule span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 162, 75, 0.7), transparent);
+}
+.dedication__rule b {
+  font-weight: 400;
+}
+
+.dedication__message {
+  margin: 0 auto;
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: #f8e9de;
+}
+
+.dedication__for {
+  margin: 14px auto 0;
+  max-width: 30ch;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: rgba(248, 233, 222, 0.82);
+}
+
+.dedication__sign {
+  margin: 20px 0 0;
+  font-family: "Great Vibes", "Snell Roundhand", "Brush Script MT", cursive;
+  font-size: 32px;
+  line-height: 1.1;
+  color: #f1d58a;
+}
+.dedication__role {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: rgba(248, 233, 222, 0.65);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dedication__seal {
+    animation: none;
+  }
+  .dedication__petals span {
+    animation: none;
+    opacity: 0;
+  }
+}

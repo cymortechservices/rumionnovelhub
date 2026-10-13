@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { apiError } from "../services/api";
+import PasswordField from "../components/PasswordField";
 import "./Auth.css";
 
 export default function Login() {
@@ -15,10 +17,10 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await login(form.email, form.password);
-      navigate("/");
+      await login(form.email.trim(), form.password);
+      navigate("/", { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || "Couldn't log you in.");
+      setError(apiError(err, "Couldn't log you in."));
     } finally {
       setLoading(false);
     }
@@ -27,31 +29,38 @@ export default function Login() {
   return (
     <div className="auth container">
       <h2 className="font-display">Welcome back</h2>
-      <p className="muted">Log in to comment, rate and keep your favorites in sync.</p>
+      <p className="muted">Log in to comment, rate and keep your favorites.</p>
       <form onSubmit={submit} className="auth__form">
         <input
           className="input"
           type="email"
+          inputMode="email"
           placeholder="Email"
           value={form.email}
           onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+          autoComplete="email"
+          autoCapitalize="none"
           required
         />
-        <input
-          className="input"
-          type="password"
-          placeholder="Password"
+        <PasswordField
           value={form.password}
-          onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-          required
+          onChange={(v) => setForm((f) => ({ ...f, password: v }))}
+          autoComplete="current-password"
         />
-        {error && <p className="auth__error">{error}</p>}
+        {error && (
+          <p className="auth__error" role="alert">
+            {error}
+          </p>
+        )}
         <button className="btn btn-primary btn-block" disabled={loading}>
           {loading ? "Logging in…" : "Log in"}
         </button>
       </form>
       <p className="muted auth__switch">
         New here? <Link to="/register">Create an account</Link>
+      </p>
+      <p className="muted auth__switch">
+        <Link to="/">Keep reading as a guest</Link>
       </p>
     </div>
   );

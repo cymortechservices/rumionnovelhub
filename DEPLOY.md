@@ -24,3 +24,23 @@
 Open the site -> entry animation -> Home. Register with "publish my own novels" ticked to unlock the Author tab.
 
 Render's free tier sleeps after inactivity; the first request after a nap can take ~30s.
+
+## 5. Notes for v1.1.0
+
+**Sign-up error `E11000 ... cymor.users ... phone_1 dup key`**
+Your Atlas database `cymor` already holds another app's `users` collection with a unique `phone` index.
+Rumion now stores its data in its own collections (`rumion_users`, `rumion_novels`, `rumion_chapters`,
+`rumion_comments`, `rumion_ratings`), so it never touches that index. Change the prefix with the
+`COLLECTION_PREFIX` env var (default `rumion_`). Duplicate emails now return a clear
+"An account with that email already exists" message.
+
+If you already created Rumion accounts in the old `users` collection and want to keep them:
+```bash
+cd backend && npm run migrate:users
+```
+
+**Continue reading** is stored in the reader's own browser (localStorage), so it is per device and needs no account.
+Readers see it on Home and at `/continue` when they return.
+
+**Reader modes**: readers can switch between *Turn pages* (real-book flip, hinged at the spine) and *Scroll*
+from the reader toolbar or Settings.

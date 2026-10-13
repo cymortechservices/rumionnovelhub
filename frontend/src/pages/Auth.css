@@ -5,3 +5,19 @@
 .auth__error { color: var(--burgundy); font-size: 13px; margin: 0; }
 .auth__switch { margin-top: 18px; text-align: center; }
 .auth__switch a { color: var(--accent); font-weight: 600; }
+.pw { position: relative; }
+.pw .input { padding-right: 64px; }
+.pw__toggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.auth__error { background: rgba(122, 35, 49, 0.1); padding: 10px 12px; border-radius: 8px; }

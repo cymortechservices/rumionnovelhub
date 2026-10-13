@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const coll = require("../config/collections");
 
 const GENRES = [
   "action",
@@ -42,5 +43,5 @@ const novelSchema = new mongoose.Schema(
 
 novelSchema.index({ title: "text", synopsis: "text", tags: "text" });
 
-module.exports = mongoose.model("Novel", novelSchema);
+module.exports = mongoose.model("Novel", novelSchema, coll("novels"));
 module.exports.GENRES = GENRES;

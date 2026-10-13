@@ -6,6 +6,8 @@ import {
 import { unwrapList, normalizeNovel } from "../utils/externalAdapter";
 import { CATEGORIES } from "../constants/externalGenres";
 import { isAgeConfirmed } from "../utils/ageGate";
+import GlowSearch from "../components/GlowSearch";
+import ContinueRow from "../components/ContinueRow";
 import HeroCarousel from "../components/HeroCarousel";
 import CategoryRow from "../components/CategoryRow";
 import "./Home.css";
@@ -30,8 +32,8 @@ export default function Home() {
 
   useEffect(() => {
     let alive = true;
-    fetchNovels({ limit: 10, sort: "trending" })
-      .then((d) => alive && setMine(d.novels.filter((n) => n.source === "original")))
+    fetchNovels({ limit: 10, sort: "trending", source: "original" })
+      .then((d) => alive && setMine(d.novels))
       .catch(() => {});
 
     fetchExternalFeatured(1, 12)
@@ -56,12 +58,11 @@ export default function Home() {
 
   return (
     <div>
-      <form className="home__search container" onSubmit={submit}>
-        <input className="input" placeholder="Search novels, authors, tags…" value={query}
-          onChange={(e) => setQuery(e.target.value)} />
-      </form>
+      <GlowSearch value={query} onChange={setQuery} onSubmit={submit} />
 
       <HeroCarousel novels={trending} source="external" />
+
+      <ContinueRow />
 
       {failed && (
         <div className="home__empty container">

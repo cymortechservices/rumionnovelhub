@@ -1,19 +1,28 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { local } from "../utils/store";
 
-// Controls the overall app chrome (not the in-reader theme, which ReaderPrefsContext owns).
+// The app's own light/dark look (the reader has its own page colours).
 const AppThemeContext = createContext(null);
 
+const initialDark = () => {
+  const saved = local.get("rumion_dark");
+  if (saved !== null) return saved === "true";
+  try {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  } catch {
+    return false;
+  }
+};
+
 export function AppThemeProvider({ children }) {
-  const [dark, setDark] = useState(() => localStorage.getItem("rumion_dark") === "true");
+  const [dark, setDark] = useState(initialDark);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-    localStorage.setItem("rumion_dark", String(dark));
+    local.set("rumion_dark", String(dark));
   }, [dark]);
 
-  return (
-    <AppThemeContext.Provider value={{ dark, setDark }}>{children}</AppThemeContext.Provider>
-  );
+  return <AppThemeContext.Provider value={{ dark, setDark }}>{children}</AppThemeContext.Provider>;
 }
 
 export const useAppTheme = () => useContext(AppThemeContext);

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const coll = require("../config/collections");
 
 const chapterSchema = new mongoose.Schema(
   {
@@ -15,4 +16,4 @@ const chapterSchema = new mongoose.Schema(
 
 chapterSchema.index({ novel: 1, order: 1 }, { unique: true });
 
-module.exports = mongoose.model("Chapter", chapterSchema);
+module.exports = mongoose.model("Chapter", chapterSchema, coll("chapters"));

@@ -33,7 +33,7 @@ router.get(
   "/:id",
   optionalAuth,
   asyncHandler(async (req, res) => {
-    const chapter = await Chapter.findById(req.params.id).populate("novel", "title author isMature");
+    const chapter = await Chapter.findById(req.params.id).populate("novel", "title author authorName coverUrl chapterCount isMature");
     if (!chapter) {
       res.status(404);
       throw new Error("Chapter not found.");

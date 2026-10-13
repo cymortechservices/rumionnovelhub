@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const coll = require("../config/collections");
 
 const commentSchema = new mongoose.Schema(
   {
@@ -12,4 +13,4 @@ const commentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Comment", commentSchema);
+module.exports = mongoose.model("Comment", commentSchema, coll("comments"));

@@ -14,6 +14,7 @@ router.get(
     const { genre, status, q, page = 1, limit = 20, mature } = req.query;
     const filter = {};
     if (genre) filter.genres = genre;
+    if (req.query.source) filter.source = req.query.source;
     if (status) filter.status = status;
     if (mature === "false") filter.isMature = false;
     if (q) filter.$text = { $search: q };
@@ -35,7 +36,7 @@ router.get(
 router.get(
   "/trending",
   asyncHandler(async (req, res) => {
-    const novels = await Novel.find({ isMature: false })
+    const novels = await Novel.find({ isMature: false, source: { $ne: "external" } })
       .sort({ views: -1, favoriteCount: -1 })
       .limit(8);
     res.json({ novels });
@@ -48,7 +49,7 @@ router.get(
   protect,
   requireAuthor,
   asyncHandler(async (req, res) => {
-    const novels = await Novel.find({ author: req.user._id }).sort({ updatedAt: -1 });
+    const novels = await Novel.find({ author: req.user._id, source: { $ne: "external" } }).sort({ updatedAt: -1 });
     res.json({ novels });
   })
 );

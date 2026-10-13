@@ -13,6 +13,10 @@ const externalRoutes = require("./routes/external");
 
 const app = express();
 
+// Render (and Vercel/Cloudflare) sit behind a proxy: trust it so rate limiting sees each visitor's
+// real IP instead of treating everyone as one client.
+app.set("trust proxy", 1);
+
 connectDB();
 
 app.use(
@@ -37,11 +41,36 @@ app.use((req, res) => {
   res.status(404).json({ message: "Not found." });
 });
 
-// Centralized error handler
+// Centralized error handler: always JSON, always a readable message (never a raw Mongo error)
 app.use((err, req, res, next) => {
-  const status = res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
+  let status = res.statusCode >= 400 ? res.statusCode : 500;
+  let message = err.message || "Something went wrong on our end.";
+
+  if (err.code === 11000) {
+    status = 409;
+    const field = Object.keys(err.keyPattern || err.keyValue || {})[0];
+    message =
+      field === "email"
+        ? "An account with that email already exists. Try logging in instead."
+        : field
+        ? `That ${field} is already in use.`
+        : "That already exists.";
+    console.error("[rumion] duplicate key:", err.message);
+  } else if (err.name === "ValidationError") {
+    status = 400;
+    message = Object.values(err.errors || {})[0]?.message || message;
+  } else if (err.name === "CastError") {
+    status = 400;
+    message = "That link isn't valid.";
+  } else if (err.name === "MulterError") {
+    status = 400;
+    message = err.code === "LIMIT_FILE_SIZE" ? "That image is too large." : err.message;
+  } else if (status === 500) {
+    console.error("[rumion] unexpected error:", err);
+  }
+
   res.status(status).json({
-    message: err.message || "Something went wrong on our end.",
+    message,
     stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
   });
 });
